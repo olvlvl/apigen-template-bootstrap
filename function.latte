@@ -21,7 +21,7 @@ the file LICENSE.md that was distributed with this source code.
 	{!$function|longDescription}
 	</div>
 
-	<div class="info">
+	<div class="alert alert-info">
 		{if $function->inNamespace()}<b>Namespace:</b> {!$function->namespaceName|namespaceLinks}<br>{/if}
 		{foreach $template->annotationSort($template->annotationFilter($function->annotations, array('param', 'return', 'throws'))) as $annotation => $values}
 			{foreach $values as $value}
@@ -34,25 +34,37 @@ the file LICENSE.md that was distributed with this source code.
 
 	{var $annotations = $function->annotations}
 
-	<table class="summary" id="parameters" n:if="$function->numberOfParameters">
-	<caption>Parameters summary</caption>
-	<tr n:foreach="$function->parameters as $parameter" data-order="{$parameter->name}" id="${$parameter->name}">
-		<td class="name"><code>
-			{if $parameter->array}array
-			{elseif $parameter->className}<a href="{$parameter->className|classUrl}" n:tag-if="$template->getClass($parameter->className)">{$parameter->className}</a>
-			{elseif isset($annotations['param'][$parameter->position])}{!$annotations['param'][$parameter->position]|typeLinks:$function}{/if}
-		</code></td>
-		<td class="value"><code>{block|strip}
-			<var>{if $parameter->passedByReference}&amp; {/if}${$parameter->name}</var>{if $parameter->defaultValueAvailable} = {!$parameter->defaultValueDefinition|highlightPHP:$function}{/if}
-		{/block}</code></td>
-		<td>
-			{ifset $annotations['param'][$parameter->position]}{!$annotations['param'][$parameter->position]|description:$parameter}{/ifset}
-		</td>
-	</tr>
+	{if $function->numberOfParameters}
+	<h2>Parameters summary</h2>
+	<table class="summary table table-bordered table-striped" id="parameters">
+	<thead>
+		<tr>
+			<th>Type</th>
+			<th>Name</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr n:foreach="$function->parameters as $parameter" data-order="{$parameter->name}" id="${$parameter->name}">
+			<td class="name"><code>
+				{if $parameter->array}array
+				{elseif $parameter->className}<a href="{$parameter->className|classUrl}" n:tag-if="$template->getClass($parameter->className)">{$parameter->className}</a>
+				{elseif isset($annotations['param'][$parameter->position])}{!$annotations['param'][$parameter->position]|typeLinks:$function}{/if}
+			</code></td>
+			<td class="value"><code>{block|strip}
+				<var>{if $parameter->passedByReference}&amp; {/if}${$parameter->name}</var>{if $parameter->defaultValueAvailable} = {!$parameter->defaultValueDefinition|highlightPHP:$function}{/if}
+			{/block}</code></td>
+			<td>
+				{ifset $annotations['param'][$parameter->position]}{!$annotations['param'][$parameter->position]|description:$parameter}{/ifset}
+			</td>
+		</tr>
+	</tbody>
 	</table>
+	{/if}
 
-	<table class="summary" id="returns" n:if="isset($annotations['return']) && 'void' !== $annotations['return'][0]">
-	<caption>Return value summary</caption>
+	{if isset($annotations['return']) && 'void' !== $annotations['return'][0]}
+	<h2>Return value summary</h2>
+	<table class="summary table table-bordered table-striped" id="returns">
 	<tr>
 		<td class="name"><code>
 			{!$annotations['return'][0]|typeLinks:$function}
@@ -62,9 +74,11 @@ the file LICENSE.md that was distributed with this source code.
 		</td>
 	</tr>
 	</table>
+	{/if}
 
-	<table class="summary" id="throws" n:ifset="$annotations['throws']">
-	<caption>Thrown exceptions summary</caption>
+	{if isset($annotations['throws'])}
+	<h2>Thrown exceptions summary</h2>
+	<table class="summary table table-bordered table-striped" id="throws">
 	<tr n:foreach="$annotations['throws'] as $throws">
 		<td class="name"><code>
 			{!$throws|typeLinks:$function}
@@ -74,5 +88,6 @@ the file LICENSE.md that was distributed with this source code.
 		</td>
 	</tr>
 	</table>
+	{/if}
 </div>
 {/block}

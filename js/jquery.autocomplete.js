@@ -395,7 +395,7 @@ $.Autocompleter = function(input, options) {
 
 $.Autocompleter.defaults = {
 	inputClass: "ac_input",
-	resultsClass: "ac_results",
+	resultsClass: "typeahead dropdown-menu",
 	loadingClass: "ac_loading",
 	minChars: 1,
 	delay: 400,
@@ -561,7 +561,7 @@ $.Autocompleter.Cache = function(options) {
 
 $.Autocompleter.Select = function (options, input, select, config) {
 	var CLASSES = {
-		ACTIVE: "ac_over"
+		ACTIVE: "active"
 	};
 
 	var listItems,
@@ -576,13 +576,13 @@ $.Autocompleter.Select = function (options, input, select, config) {
 	function init() {
 		if (!needsInit)
 			return;
-		element = $("<div/>")
+		element = $("<ul/>")
 		.hide()
 		.addClass(options.resultsClass)
 		.css("position", "absolute")
 		.appendTo(document.body);
 
-		list = $("<ul/>").appendTo(element).mouseover( function(event) {
+		list = element; list.mouseover( function(event) {
 			if(target(event).nodeName && target(event).nodeName.toUpperCase() == 'LI') {
 				active = $("li", list).removeClass(CLASSES.ACTIVE).index(target(event));
 				$(target(event)).addClass(CLASSES.ACTIVE);
@@ -656,7 +656,11 @@ $.Autocompleter.Select = function (options, input, select, config) {
 			var formatted = options.formatItem(data[i].data, i+1, max, data[i].value, term);
 			if ( formatted === false )
 				continue;
-			var li = $("<li/>").html( options.highlight(formatted, term) ).addClass(i%2 == 0 ? "ac_even" : "ac_odd").appendTo(list)[0];
+
+			var html = options.highlight(formatted, term)
+			html = '<a href="#">' + html + '</a>'
+
+			var li = $("<li/>").html( html ).appendTo(list)[0];
 			$.data(li, "ac_data", data[i]);
 		}
 		listItems = list.find("li");
