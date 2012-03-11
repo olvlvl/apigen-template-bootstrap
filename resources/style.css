@@ -437,7 +437,7 @@ td.name, td.attributes {
 	color: #808080;
 	text-align: right;
 	padding: 2em 1em;
-	margin: 3em 0 0;
+	margin: 3em 0 40px 0;
 }
 
 /* Tree */
